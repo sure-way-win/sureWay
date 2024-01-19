@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const Admin = require("../models/Admin");
+const Admin = require("../models/AdminMini");
 
 const verifyAdmin = async (username, password, verificationCode) => {
   try {
