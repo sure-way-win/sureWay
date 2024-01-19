@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
-const adminSchema = new mongoose.Schema({
+const adminMiniSchema = new mongoose.Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
   isVerified: { type: Boolean, required: true },
 });
 
-const Admin = mongoose.model("Admins", adminSchema, "Admins");
+const AdminMini = mongoose.model("Admins", adminMiniSchema, "Admins");
 
-module.exports = Admin;
+module.exports = AdminMini;

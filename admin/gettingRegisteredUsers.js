@@ -51,7 +51,7 @@ router.get("/registeredUsers", async (req, res) => {
     // console.log("Filtered users from User collection:", matchingUsers);
 
     // Print the data to the console
-    // console.log("Filtered registered users:", filteredUsers);
+    console.log("Filtered registered users:", filteredUsers);
 
     res.json({
       success: true,

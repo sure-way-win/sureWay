@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const Admin = require("../../models/Admin");
+const AdminMini = require("../../models/AdminMini");
 
 module.exports = (app) => {
   app.post("/Admin/login", async (req, res, next) => {
@@ -11,7 +11,7 @@ module.exports = (app) => {
 
     try {
       // Find a user with the provided username
-      const foundUser = await Admin.findOne({ username });
+      const foundUser = await AdminMini.findOne({ username });
       if (foundUser.isVerified) {
         if (foundUser) {
           // Compare the provided password with the hashed password in the database

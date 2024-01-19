@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const Admin = require("../models/AdminMini");
+const AdminMini = require("../models/AdminMini");
 
 const verifyAdmin = async (username, password, verificationCode) => {
   try {
-    const foundUser = await Admin.findOne({ username });
+    const foundUser = await AdminMini.findOne({ username });
 
     if (!foundUser) {
       console.log("User not found");
@@ -15,7 +15,7 @@ const verifyAdmin = async (username, password, verificationCode) => {
     const isCodeMatch = String(foundUser._id) === verificationCode; // Convert ObjectId to string for comparison
 
     if (isPasswordMatch && isCodeMatch) {
-      await Admin.findByIdAndUpdate(foundUser._id, { isVerified: true });
+      await AdminMini.findByIdAndUpdate(foundUser._id, { isVerified: true });
       console.log("Admin verified successfully");
       return { success: "Admin verified successfully" };
     } else {

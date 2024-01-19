@@ -79,10 +79,10 @@ const vehicleSchema = new mongoose.Schema({
 });
 
 // Create a User model based on the schema
-// const User = mongoose.model("User", user1Schema, "Users");
+const User = require("./models/userModel");
 
 // Create a driver model based on the schema
-const driver = mongoose.model("Driver", driverSchema, "Drivers");
+const driver = require("./models/driverModel");
 
 // Create a bus model based on the schema
 const bus = mongoose.model("Bus", vehicleSchema, "Vehicles");
