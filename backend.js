@@ -34,39 +34,11 @@ app.post("/verifyingAdmin", async (req, res, next) => {
 
 require("./routes")(app);
 
-// Define a schema for the children
-const child1Schema = new mongoose.Schema({
-  name: String,
-  age: Number,
-  school: String,
-  pickupAddress: String,
-  dropAddress: String,
-  vehicleID: String,
-  travellingStatus: { type: Number },
-});
+const getRegisteredUsers = require("./admin/gettingRegisteredUsers");
+app.use("/Admin", getRegisteredUsers);
 
-const user1Schema = new mongoose.Schema({
-  fullName: { type: String, required: true },
-  username: { type: String, required: true },
-  contactNumber: { type: String, required: true },
-  email: { type: String, required: true },
-  ChildAddRequest: { type: Number, default: -1 },
-  children: [child1Schema], // An array of children objects
-});
-
-// Define a schema for the driver collection
-const driverSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastDName: { type: String, required: true },
-  userDname: { type: String, required: true },
-  hashedDPassword: { type: String, required: true },
-  contactDNumber: { type: String, required: true },
-  emailD: { type: String, required: true },
-  addressD: { type: String, required: true },
-  nicD: { type: String, required: true },
-  licensenumberD: { type: String, required: true },
-  assignedVehicleIdD: { type: String, default: null },
-});
+const getDrivers = require("./admin/gettingDrivers");
+app.use("/Admin", getDrivers);
 
 // Define a schema for the vehicle collection
 const vehicleSchema = new mongoose.Schema({
@@ -112,9 +84,6 @@ app.get("/forRegistration", async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 });
-
-const getRegisteredUsers = require("./admin/gettingRegisteredUsers");
-app.use("/Admin", getRegisteredUsers);
 
 //------------------------------------methods for users registering (update)-----------------------
 
@@ -307,25 +276,6 @@ app.get("/availableWithDrivers", async (req, res) => {
 });
 
 //------------------------------------methods for drivers showing (read)-----------------------
-
-app.get("/gettingDrivers", async (req, res) => {
-  try {
-    // Retrieve all registered-users from the 'Sureway' collection
-    const gettingDrivers = await driver.find();
-
-    // Print the data to the console
-    console.log("Getting Drivers:", gettingDrivers);
-
-    res.json({
-      success: true,
-      message: "Data retrieval successful",
-      gettingDrivers: gettingDrivers,
-    });
-  } catch (error) {
-    console.error("Error during getting registered drivers:", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-});
 
 //------------------------------------methods for showing children who are not assigned to bus (read)-----------------------
 
