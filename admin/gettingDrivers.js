@@ -11,7 +11,7 @@ router.get("/gettingDrivers", async (req, res) => {
     //     .status(400)
     //     .json({ success: false, message: "Agency parameter is required" });
     // }
-    const agency = "Raja-Express";
+    const agency = "Rani-Express";
     const gettingDrivers = await driver.find({
       agency: agency,
     });
