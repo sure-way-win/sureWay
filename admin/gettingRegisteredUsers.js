@@ -16,47 +16,42 @@ router.get("/registeredUsers", async (req, res) => {
     const registeredUsers = await Children.find({
       isVerified: 1,
       Agency: agency,
-    }).select("parentName name");
-
-    console.log("Registered users:", registeredUsers);
+    });
 
     const parentNames = registeredUsers.map((user) => user.parentName);
 
-    // Filter registeredUsers based on matching parentName
     const matchingUsers = await User.find({
       username: { $in: parentNames },
     }).select("-children -ChildAddRequest -hashedPassword -_id -isVerified");
 
-    // console.log("matching users from User collection:", matchingUsers);
-
-    // Create a map for easier lookup
     const registeredUsersMap = new Map();
 
-    // Iterate over registeredUsers to populate the map
     registeredUsers.forEach((user) => {
       const existingData = registeredUsersMap.get(user.parentName) || [];
       existingData.push(user.name);
       registeredUsersMap.set(user.parentName, existingData);
     });
 
-    // Merge the data
-    const filteredUsers = matchingUsers.map((user) => {
-      const registeredUserData = registeredUsersMap.get(user.username);
+    const filteredUsers = matchingUsers.map(async (user) => {
+      const registeredUserData = registeredUsersMap.get(user.username) || [];
+      const childrenData = await Children.find({
+        parentName: user.username,
+      }).select("-_id -isVerified -Agency -parentName");
       return {
         ...user.toObject(),
-        children: registeredUserData || null,
+        children: registeredUserData,
+        childrenData: childrenData,
       };
     });
 
-    // console.log("Filtered users from User collection:", matchingUsers);
+    // Wait for all promises to resolve
+    const result = await Promise.all(filteredUsers);
 
-    // Print the data to the console
-    console.log("Filtered registered users:", filteredUsers);
-
+    // Sending the response as JSON
     res.json({
       success: true,
       message: "Data retrieval successful",
-      users: filteredUsers,
+      users: result,
     });
   } catch (error) {
     console.error("Error during getting registered users:", error.message);
