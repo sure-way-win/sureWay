@@ -4,14 +4,13 @@ const vehicleSchema = new mongoose.Schema({
   vehicleID: { type: String },
   School: { type: String },
   seats: { type: Number },
-  seatsFilled: { type: Number },
-  Driver: { type: String },
+  seatsFilled: { type: Number, default: 0 },
+  Driver: { type: String, default: "" },
   Children: { type: Array },
-  address: { type: String },
   agency: { type: String },
   ThingName: { type: String },
 });
 
-const Vehilce = mongoose.model("Vehicle", vehicleSchema, "Vehicles");
+const Vehicle = mongoose.model("Vehicle", vehicleSchema, "Vehicles");
 
 module.exports = Vehicle;

@@ -44,19 +44,6 @@ router.post("/driverRegistration", async (req, res) => {
     // Save the User document to the database
     await newDriver.save();
 
-    // You can print the data to the console, including the hashed password
-    // console.log("Received driver data:", {
-    //   firstName,
-    //   lastDName,
-    //   userDname,
-    //   hashedDPassword,
-    //   contactDNumber,
-    //   emailD,
-    //   addressD,
-    //   nicD,
-    //   licensenumberD,
-    // });
-
     // Send a response to the client
     res.json({ success: true, message: "Driver adding successful" });
   } catch (error) {

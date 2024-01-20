@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
-const port = 3000;
+const port = 8000;
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
@@ -43,15 +43,14 @@ app.use("/Admin", getDrivers);
 const addingDrivers = require("./admin/driverRegistration");
 app.use("/Admin", addingDrivers);
 
-// Define a schema for the vehicle collection
-const vehicleSchema = new mongoose.Schema({
-  vehicleID: { type: String, required: true },
-  School: { type: String, required: true },
-  seats: { type: Number, default: 0 },
-  seatsFilled: { type: Number, default: 0 },
-  Driver: { type: String, default: null },
-  children: { type: Array, default: null },
-});
+const addingVehicles = require("./admin/vehicleRegistration");
+app.use("/Admin", addingVehicles);
+
+const gettingVehicles = require("./admin/gettingRegisteredVehicles");
+app.use("/Admin", gettingVehicles);
+
+const gettingbusNotAssignedChildren = require("./admin/gettingbusNotAssignedChildren");
+app.use("/Admin", gettingbusNotAssignedChildren);
 
 // Create a User model based on the schema
 const User = require("./models/userModel");
@@ -60,13 +59,12 @@ const User = require("./models/userModel");
 const driver = require("./models/driverModel");
 
 // Create a bus model based on the schema
-const bus = mongoose.model("Bus", vehicleSchema, "Vehicles");
+const bus = require("./models/vehicleModel");
 
 //------------------------------------methods for users retrieving (read)-----------------------
 
 app.get("/forRegistration", async (req, res) => {
   try {
-    // Retrieve users who are need to register from the 'Sureway' collection
     const usersNeedToRegister = await User.find({ ChildAddRequest: 0 }).select(
       "-hashedPassword"
     );
@@ -116,121 +114,6 @@ app.put("/registering", async (req, res) => {
   }
 });
 
-//------------------------------------methods for driver adding (create)-----------------------
-
-app.post("/driverRegistration", async (req, res) => {
-  const {
-    firstName,
-    lastDName,
-    // userDname,
-    // password,
-    // contactDNumber,
-    // emailD,
-    // addressD,
-    // nicD,
-    // licensenumberD,
-    // assignedVehicleIdD,
-  } = req.body;
-  // console.log("Received request body:", req.body);
-
-  try {
-    // const hashedDPassword = await bcrypt.hash(password, 10);
-    // console.log("Hashed password:", hashedDPassword);
-
-    // created a new driver Document..
-    const newDriver = new driver({
-      firstName,
-      lastDName,
-      // userDname,
-      // hashedDPassword,
-      // contactDNumber,
-      // emailD,
-      // addressD,
-      // nicD,
-      // licensenumberD,
-      // assignedVehicleIdD,
-    });
-
-    // Save the User document to the database
-    await newDriver.save();
-
-    // You can print the data to the console, including the hashed password
-    console.log("Received driver data:", {
-      firstName,
-      lastDName,
-      // userDname,
-      // hashedDPassword,
-      // contactDNumber,
-      // emailD,
-      // addressD,
-      // nicD,
-      // licensenumberD,
-      // assignedVehicleIdD,
-    });
-
-    // Send a response to the client
-    res.json({ success: true, message: "Driver adding successful" });
-  } catch (error) {
-    console.error("Error during adding driver:", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-});
-
-//------------------------------------methods for vehicle adding (create)-----------------------
-
-app.post("/vehicleRegistration", async (req, res) => {
-  const { vehicleID, School, seats, seatsFilled, driver } = req.body;
-  console.log("Received request body:", req.body);
-
-  try {
-    const newVehicle = new bus({
-      vehicleID,
-      School,
-      seats,
-      seatsFilled,
-      driver,
-    });
-
-    // Save the User document to the database
-    await newVehicle.save();
-
-    // You can print the data to the console, including the hashed password
-    console.log("Received driver data:", {
-      vehicleID,
-      School,
-      seats,
-      seatsFilled,
-      driver,
-    });
-
-    // Send a response to the client
-    res.json({ success: true, message: "Vehicle adding successful" });
-  } catch (error) {
-    console.error("Error during adding vehicle :", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-});
-
-//------------------------------------methods for vehicle showing (read)-----------------------
-
-app.get("/registeredVehicles", async (req, res) => {
-  try {
-    // Retrieve all registered-vehicles from the 'Sureway' collection
-    const registeredVehicles = await bus.find();
-
-    // Print the data to the console
-    console.log("Registered Vehicles:", registeredVehicles);
-
-    res.json({
-      success: true,
-      message: "Data retrieval successful",
-      registeredVehicles: registeredVehicles,
-    });
-  } catch (error) {
-    console.error("Error during getting registered vehicles:", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-});
 //------------------------------------methods for vehicle showing which are not having drivers (read)-----------------------
 
 app.get("/notAssignedDriversVehicles", async (req, res) => {
@@ -274,35 +157,6 @@ app.get("/availableWithDrivers", async (req, res) => {
       "Error during vehicles which have drive with available seats:",
       error.message
     );
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-});
-
-//------------------------------------methods for drivers showing (read)-----------------------
-
-//------------------------------------methods for showing children who are not assigned to bus (read)-----------------------
-
-app.get("/childrenDetails", async (req, res) => {
-  try {
-    const childDetails = await User.find({
-      children: {
-        $elemMatch: {
-          vehicleID: null,
-        },
-      },
-      ChildAddRequest: 1,
-    }).select("children");
-
-    // Print the data to the console
-    console.log("Child Details:", childDetails);
-
-    res.json({
-      success: true,
-      message: "Data retrieval successful",
-      childDetails: childDetails,
-    });
-  } catch (error) {
-    console.error("Error during getting children:", error.message);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 });
