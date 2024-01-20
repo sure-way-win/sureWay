@@ -1,0 +1,67 @@
+const express = require("express");
+const router = express.Router();
+const driver = require("../models/driverModel");
+const bcrypt = require("bcrypt");
+
+router.post("/driverRegistration", async (req, res) => {
+  const {
+    firstName,
+    lastDName,
+    userDname,
+    password,
+    contactDNumber,
+    emailD,
+    addressD,
+    nicD,
+    licensenumberD,
+  } = req.body;
+
+  // const { agency } = "req.query"; // Assuming the agency parameter is passed in the query string
+
+  // if (!agency) {
+  //   return res
+  //     .status(400)
+  //     .json({ success: false, message: "Agency parameter is required" });
+  // }
+  const agency = "Rani-Express";
+
+  try {
+    const hashedDPassword = await bcrypt.hash(password, 10);
+    // created a new driver Document..
+    const newDriver = new driver({
+      firstName,
+      lastName: lastDName,
+      username: userDname,
+      hashedPassword: hashedDPassword,
+      contactNumber: contactDNumber,
+      email: emailD,
+      address: addressD,
+      NIC: nicD,
+      licenseNumber: licensenumberD,
+      agency: agency,
+    });
+
+    // Save the User document to the database
+    await newDriver.save();
+
+    // You can print the data to the console, including the hashed password
+    // console.log("Received driver data:", {
+    //   firstName,
+    //   lastDName,
+    //   userDname,
+    //   hashedDPassword,
+    //   contactDNumber,
+    //   emailD,
+    //   addressD,
+    //   nicD,
+    //   licensenumberD,
+    // });
+
+    // Send a response to the client
+    res.json({ success: true, message: "Driver adding successful" });
+  } catch (error) {
+    console.error("Error during adding driver:", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+module.exports = router;

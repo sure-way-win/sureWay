@@ -40,6 +40,9 @@ app.use("/Admin", getRegisteredUsers);
 const getDrivers = require("./admin/gettingDrivers");
 app.use("/Admin", getDrivers);
 
+const addingDrivers = require("./admin/driverRegistration");
+app.use("/Admin", addingDrivers);
+
 // Define a schema for the vehicle collection
 const vehicleSchema = new mongoose.Schema({
   vehicleID: { type: String, required: true },
@@ -119,33 +122,33 @@ app.post("/driverRegistration", async (req, res) => {
   const {
     firstName,
     lastDName,
-    userDname,
-    password,
-    contactDNumber,
-    emailD,
-    addressD,
-    nicD,
-    licensenumberD,
-    assignedVehicleIdD,
+    // userDname,
+    // password,
+    // contactDNumber,
+    // emailD,
+    // addressD,
+    // nicD,
+    // licensenumberD,
+    // assignedVehicleIdD,
   } = req.body;
   // console.log("Received request body:", req.body);
 
   try {
-    const hashedDPassword = await bcrypt.hash(password, 10);
-    console.log("Hashed password:", hashedDPassword);
+    // const hashedDPassword = await bcrypt.hash(password, 10);
+    // console.log("Hashed password:", hashedDPassword);
 
     // created a new driver Document..
     const newDriver = new driver({
       firstName,
       lastDName,
-      userDname,
-      hashedDPassword,
-      contactDNumber,
-      emailD,
-      addressD,
-      nicD,
-      licensenumberD,
-      assignedVehicleIdD,
+      // userDname,
+      // hashedDPassword,
+      // contactDNumber,
+      // emailD,
+      // addressD,
+      // nicD,
+      // licensenumberD,
+      // assignedVehicleIdD,
     });
 
     // Save the User document to the database
@@ -155,14 +158,14 @@ app.post("/driverRegistration", async (req, res) => {
     console.log("Received driver data:", {
       firstName,
       lastDName,
-      userDname,
-      hashedDPassword,
-      contactDNumber,
-      emailD,
-      addressD,
-      nicD,
-      licensenumberD,
-      assignedVehicleIdD,
+      // userDname,
+      // hashedDPassword,
+      // contactDNumber,
+      // emailD,
+      // addressD,
+      // nicD,
+      // licensenumberD,
+      // assignedVehicleIdD,
     });
 
     // Send a response to the client
