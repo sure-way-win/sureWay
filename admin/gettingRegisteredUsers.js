@@ -17,8 +17,10 @@ router.get("/registeredUsers", async (req, res) => {
       isVerified: 1,
       Agency: agency,
     });
+    console.log(registeredUsers);
 
     const parentNames = registeredUsers.map((user) => user.parentName);
+    const names = registeredUsers.map((user) => user.name);
 
     const matchingUsers = await User.find({
       username: { $in: parentNames },
@@ -36,7 +38,9 @@ router.get("/registeredUsers", async (req, res) => {
       const registeredUserData = registeredUsersMap.get(user.username) || [];
       const childrenData = await Children.find({
         parentName: user.username,
+        name: { $in: names },
       }).select("-_id -isVerified -Agency -parentName");
+      console.log(childrenData);
       return {
         ...user.toObject(),
         children: registeredUserData,
