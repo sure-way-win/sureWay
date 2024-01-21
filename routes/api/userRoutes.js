@@ -32,7 +32,6 @@ module.exports = (app) => {
                 } else {
                   res.json({
                     token,
-                    Admin: foundUser,
                   });
                 }
               }
