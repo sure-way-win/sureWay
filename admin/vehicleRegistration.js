@@ -15,7 +15,7 @@ const vehicleSchema = new mongoose.Schema({
 const bus = mongoose.model("Bus", vehicleSchema, "Vehicles");
 
 router.post("/vehicleRegistration", async (req, res) => {
-  const { vehicleNumber, School, seats } = req.body;
+  const { vehicleNumber, School, seats, ThingName } = req.body;
   // const { agency } = "req.query"; // Assuming the agency parameter is passed in the query string
 
   // if (!agency) {
@@ -24,7 +24,7 @@ router.post("/vehicleRegistration", async (req, res) => {
   //     .json({ success: false, message: "Agency parameter is required" });
   // }
   const agency = "Rosa-Express";
-  const ThingName = "SN0034";
+  // const ThingName = "SN0034";
 
   try {
     const newVehicle = new bus({
