@@ -12,13 +12,14 @@ module.exports = (app) => {
     try {
       // Find a user with the provided username
       const foundUser = await AdminMini.findOne({ username });
-      if (foundUser) {
-        if (foundUser.isVerified) {
+      if (foundUser.isVerified) {
+        if (foundUser) {
           // Compare the provided password with the hashed password in the database
           const isPasswordMatch = await bcrypt.compare(
             password,
             foundUser.password
           );
+
           if (isPasswordMatch) {
             // If password matches, generate a JWT token for the user with a secret key
             jwt.sign(
@@ -30,10 +31,7 @@ module.exports = (app) => {
                   console.log(err);
                   res.status(500).send("Internal Server Error");
                 } else {
-                  res.json({
-                    token,
-                    Admin: foundUser,
-                  });
+                  res.send(token);
                 }
               }
             );
@@ -42,12 +40,12 @@ module.exports = (app) => {
             res.status(401).send("Incorrect password");
           }
         } else {
-          console.log("Account is not verified");
-          res.status(403).send("Account is not verified");
+          console.log("ERROR: User not found");
+          res.status(401).send("User not found");
         }
       } else {
-        console.log("ERROR: User not found");
-        res.status(401).send("User not found");
+        console.log("Account is not verified");
+        res.status(403).send("Account is not verified");
       }
     } catch (error) {
       console.error("Error during login:", error.message);
