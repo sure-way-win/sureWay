@@ -12,8 +12,8 @@ module.exports = (app) => {
     try {
       // Find a user with the provided username
       const foundUser = await AdminMini.findOne({ username });
-      if (foundUser.isVerified) {
-        if (foundUser) {
+      if (foundUser) {
+        if (foundUser.isVerified) {
           // Compare the provided password with the hashed password in the database
           const isPasswordMatch = await bcrypt.compare(
             password,
@@ -40,12 +40,12 @@ module.exports = (app) => {
             res.status(401).send("Incorrect password");
           }
         } else {
-          console.log("ERROR: User not found");
-          res.status(401).send("User not found");
+          console.log("Account is not verified");
+          res.status(403).send("Account is not verified");
         }
       } else {
-        console.log("Account is not verified");
-        res.status(403).send("Account is not verified");
+        console.log("ERROR: User not found");
+        res.status(401).send("User not found");
       }
     } catch (error) {
       console.error("Error during login:", error.message);
