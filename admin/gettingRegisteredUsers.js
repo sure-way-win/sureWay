@@ -5,19 +5,19 @@ const Children = require("../models/childModel");
 
 router.get("/registeredUsers", async (req, res) => {
   try {
-    const { agency } = req.query; // Assuming the agency parameter is passed in the query string
-    console.log(agency);
+    // const { agency } = "req.query"; // Assuming the agency parameter is passed in the query string
 
-    if (!agency) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Agency parameter is required" });
-    }
+    // if (!agency) {
+    //   return res
+    //     .status(400)
+    //     .json({ success: false, message: "Agency parameter is required" });
+    // }
+    const agency = "Rani-Express";
     const registeredUsers = await Children.find({
       isVerified: 1,
       Agency: agency,
     });
-    // console.log(registeredUsers);
+    console.log(registeredUsers);
 
     const parentNames = registeredUsers.map((user) => user.parentName);
     const names = registeredUsers.map((user) => user.name);

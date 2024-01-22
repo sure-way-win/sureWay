@@ -30,7 +30,10 @@ module.exports = (app) => {
                   console.log(err);
                   res.status(500).send("Internal Server Error");
                 } else {
-                  res.send(token);
+                  res.json({
+                    token,
+                    Admin: foundUser,
+                  });
                 }
               }
             );
