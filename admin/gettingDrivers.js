@@ -4,14 +4,14 @@ const driver = require("../models/driverModel");
 
 router.get("/gettingDrivers", async (req, res) => {
   try {
-    // const { agency } = "req.query"; // Assuming the agency parameter is passed in the query string
+    const { agency } = req.query; // Assuming the agency parameter is passed in the query string
+    console.log(agency);
 
-    // if (!agency) {
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: "Agency parameter is required" });
-    // }
-    const agency = "Rani-Express";
+    if (!agency) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Agency parameter is required" });
+    }
     const gettingDrivers = await driver.find({
       agency: agency,
     });

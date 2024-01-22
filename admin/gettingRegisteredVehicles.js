@@ -4,14 +4,13 @@ const bus = require("../models/vehicleModel");
 
 router.get("/registeredVehicles", async (req, res) => {
   try {
-    // const { agency } = "req.query"; // Assuming the agency parameter is passed in the query string
+    const { agency } = req.query; // Assuming the agency parameter is passed in the query string
 
-    // if (!agency) {
-    //   return res
-    //     .status(400)
-    //     .json({ success: false, message: "Agency parameter is required" });
-    // }
-    const agency = "Rani-Express";
+    if (!agency) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Agency parameter is required" });
+    }
     const registeredVehicles = await bus.find({ agency: agency });
 
     // Print the data to the console

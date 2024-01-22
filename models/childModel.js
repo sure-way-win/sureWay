@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const childrenSchema = new mongoose.Schema({
   name: { type: String },
-  parentName: { type: String },
+  parent_username: { type: String },
   age: { type: Number },
   school: { type: String },
   pickupAddress: { type: String },
