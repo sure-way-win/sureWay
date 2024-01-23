@@ -17,7 +17,7 @@ router.get("/registeredUsers", async (req, res) => {
       isVerified: 1,
       Agency: agency,
     });
-    // console.log("This is registered users", registeredUsers);
+    console.log("This is registered users", registeredUsers);
 
     const parentNames = registeredUsers.map((user) => user.parent_username);
     const names = registeredUsers.map((user) => user.name);
