@@ -1,14 +1,15 @@
 const awsIot = require("aws-iot-device-sdk");
 const http = require("http");
 const socketIo = require("socket.io");
-const cors = require("cors"); // Add this line
 
 // Configure AWS IoT
 const endpoint = "a2acc7p4itkz1x-ats.iot.eu-north-1.amazonaws.com";
 const thingName = "snnnnnnsample2";
-const rootCAPath = "C:/Users/ASUS/Downloads/receiver/receiver/rootCA.pem";
-const privateKeyPath = "C:/Users/ASUS/Downloads/receiver/receiver/private.key";
-const certificatePath = "C:/Users/ASUS/Downloads/receiver/receiver/cert.crt";
+
+const rootCAPath = "./permissions/rootCA.pem.txt";
+
+const privateKeyPath = "./permissions/private.key.txt";
+const certificatePath = "./permissions/cert.crt.txt";
 
 function initializeAWSIoTServer() {
   let device = awsIot.device({
@@ -34,11 +35,11 @@ function initializeAWSIoTServer() {
   function onMessage(topic, payload) {
     try {
       const messagePayload = JSON.parse(payload.toString());
-      console.log(`Received message on topic ${topic}:`, messagePayload);
+      // console.log(`Received message on topic ${topic}:`, messagePayload);
 
       // Emit the message to connected Socket.IO clients
       io.emit("awsMessage", messagePayload);
-      console.log("msg sent");
+      // console.log("msg sent");
     } catch (error) {
       console.error(`Error parsing message on topic ${topic}:`, error.message);
     }

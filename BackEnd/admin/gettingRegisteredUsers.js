@@ -24,7 +24,7 @@ router.get("/registeredUsers", async (req, res) => {
 
     const matchingUsers = await User.find({
       username: { $in: parentNames },
-    }).select("-children -ChildAddRequest -hashedPassword -_id -isVerified");
+    }).select("-hashedPassword -_id -isVerified");
 
     const registeredUsersMap = new Map();
 
