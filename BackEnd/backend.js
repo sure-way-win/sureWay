@@ -13,6 +13,9 @@ app.use(express.json()); // Enable parsing of JSON in requests
 const connectToDatabase = require("./mongoDB/connection");
 connectToDatabase();
 
+const initializeAWSIoTServer = require("./getLocation");
+initializeAWSIoTServer();
+
 const verifyAdmin = require("./verifyingAdmin/verifyingAdmin");
 
 app.post("/verifyingAdmin", async (req, res, next) => {
