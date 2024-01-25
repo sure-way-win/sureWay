@@ -1,18 +1,17 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-
+const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
-const port = 3001;
+const port = 3000;
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json()); // Enable parsing of JSON in requests
 
 const connectToDatabase = require("./mongoDB/connection");
-
-const initializeAWSIoTServer = require("./getLocation");
+connectToDatabase();
 
 const verifyAdmin = require("./verifyingAdmin/verifyingAdmin");
 
@@ -33,9 +32,7 @@ app.post("/verifyingAdmin", async (req, res, next) => {
   }
 });
 
-const adminAuthRoutes = require("./adminLogin");
-app.post("/Admin/login", adminAuthRoutes.adminLogin);
-app.get("/Admin/data", adminAuthRoutes.checkToken, adminAuthRoutes.adminData);
+require("./routes")(app);
 
 const getRegisteredUsers = require("./admin/gettingRegisteredUsers");
 app.use("/Admin", getRegisteredUsers);
@@ -208,16 +205,17 @@ app.put("/assigningVehicle", async (req, res) => {
   }
 });
 
-async function startServer() {
-  try {
-    await initializeAWSIoTServer();
-    connectToDatabase();
-    app.listen(port, "0.0.0.0", () => {
-      console.log(`Server is running on http://localhost:${port}`);
-    });
-  } catch (error) {
-    console.error("Error during initialization:", error.message);
-  }
-}
+//------------------------------------methods for getting location coordinates (read)-----------------------
 
-startServer();
+app.get("/dummyCoordinates", (req, res) => {
+  // Assuming dummy coordinates for a location
+  const latitude = 37.7749;
+  const longitude = -122.4194;
+
+  // Send the coordinates as JSON to the frontend
+  res.json({ latitude, longitude });
+});
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});

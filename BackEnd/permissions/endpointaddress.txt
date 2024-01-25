@@ -1,3 +1,0 @@
-"endpointAddress": "a2acc7p4itkz1x-ats.iot.eu-north-1.amazonaws.com"
-
-
