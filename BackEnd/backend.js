@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
-const port = 3000;
+const port = 3001;
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,7 +32,9 @@ app.post("/verifyingAdmin", async (req, res, next) => {
   }
 });
 
-require("./routes")(app);
+const adminAuthRoutes = require("./adminLogin");
+app.post("/Admin/login", adminAuthRoutes.adminLogin);
+app.get("/Admin/data", adminAuthRoutes.checkToken, adminAuthRoutes.adminData);
 
 const getRegisteredUsers = require("./admin/gettingRegisteredUsers");
 app.use("/Admin", getRegisteredUsers);
