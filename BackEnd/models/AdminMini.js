@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const adminMiniSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true },
-  isVerified: { type: Boolean, required: true },
+  username: { type: String },
+  password: { type: String },
+  isVerified: { type: Boolean },
 });
 
 const AdminMini = mongoose.model("Admins", adminMiniSchema, "Admins");

@@ -7,7 +7,7 @@ const childrenSchema = new mongoose.Schema({
   school: { type: String },
   pickupAddress: { type: String },
   vehicleId: { type: String },
-  isVerified: { type: Number, default: 0 },
+  isVerified: { type: Boolean, default: false },
   travellingStatus: { type: Number, default: 0 },
   agency: { type: String },
 });

@@ -13,7 +13,7 @@ app.use(express.json()); // Enable parsing of JSON in requests
 const connectToDatabase = require("./mongoDB/connection");
 connectToDatabase();
 
-const verifyAdmin = require("./verifyingAdmin/verifyingAdmin");
+const verifyAdmin = require("./adminConfigurations/verifyingAdmin");
 
 app.post("/verifyingAdmin", async (req, res, next) => {
   const { body } = req;
@@ -32,7 +32,11 @@ app.post("/verifyingAdmin", async (req, res, next) => {
   }
 });
 
-require("./routes")(app);
+const adminLogin = require("./adminConfigurations/adminLogin");
+app.use("/Admin", adminLogin);
+
+const adminSignup = require("./adminConfigurations/adminSignup");
+app.use("/Admin", adminSignup);
 
 const getRegisteredUsers = require("./admin/gettingRegisteredUsers");
 app.use("/Admin", getRegisteredUsers);
