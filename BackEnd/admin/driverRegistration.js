@@ -16,14 +16,13 @@ router.post("/driverRegistration", async (req, res) => {
     licensenumberD,
   } = req.body;
 
-  // const { agency } = "req.query"; // Assuming the agency parameter is passed in the query string
+  const { agency } = req.query; // Assuming the agency parameter is passed in the query string
 
-  // if (!agency) {
-  //   return res
-  //     .status(400)
-  //     .json({ success: false, message: "Agency parameter is required" });
-  // }
-  const agency = "Rani-Express";
+  if (!agency) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Agency parameter is required" });
+  }
 
   try {
     const hashedDPassword = await bcrypt.hash(password, 10);

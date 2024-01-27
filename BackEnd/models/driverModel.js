@@ -12,6 +12,7 @@ const driverSchema = new mongoose.Schema({
   address: { type: String },
   agency: { type: String },
   assignedVehicle: { type: String, default: "" },
+  Snap: { type: Array, default: [] },
 });
 
 const Driver = mongoose.model("Driver", driverSchema, "Drivers");

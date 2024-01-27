@@ -1,35 +1,22 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const router = express.Router();
-
-const vehicleSchema = new mongoose.Schema({
-  vehicleID: { type: String, required: true },
-  School: { type: String, required: true },
-  seats: { type: Number },
-  seatsFilled: { type: Number, default: 0 },
-  Driver: { type: String, default: "" },
-  children: { type: Array, default: [] },
-  ThingName: { type: String },
-  agency: { type: String },
-});
-const bus = mongoose.model("Bus", vehicleSchema, "Vehicles");
+const bus = require("../models/vehicleModel");
 
 router.post("/vehicleRegistration", async (req, res) => {
-  const { vehicleNumber, School, seats, ThingName } = req.body;
-  // const { agency } = "req.query"; // Assuming the agency parameter is passed in the query string
+  const { vehicleNumber, School, SchoolAddress, seats, ThingName } = req.body;
+  const { agency } = req.query; // Assuming the agency parameter is passed in the query string
 
-  // if (!agency) {
-  //   return res
-  //     .status(400)
-  //     .json({ success: false, message: "Agency parameter is required" });
-  // }
-  const agency = "Rosa-Express";
-  // const ThingName = "SN0034";
+  if (!agency) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Agency parameter is required" });
+  }
 
   try {
     const newVehicle = new bus({
       vehicleID: vehicleNumber,
       School,
+      SchoolAddress,
       seats,
       agency,
       ThingName,
@@ -42,6 +29,7 @@ router.post("/vehicleRegistration", async (req, res) => {
     console.log("Received driver data:", {
       vehicleNumber,
       School,
+      SchoolAddress,
       seats,
       agency,
       ThingName,

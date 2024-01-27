@@ -7,7 +7,6 @@ const adminSchema = new mongoose.Schema({
   isVerified: { type: Boolean, default: false },
   email: { type: String },
   contactNumber: { type: Number },
-  Vehicles: { type: Object },
 });
 
 const Admin = mongoose.model("Admin", adminSchema, "Admins");
