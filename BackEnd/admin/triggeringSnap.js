@@ -55,11 +55,16 @@ async function onMessage(topic, payload) {
         Body: payload,
         ContentType: "image/jpeg",
       };
-      fs.writeFileSync(localImagePath, payload);
+      const fileName = `image.jpg`;
+
+      // Write the payload to the file in the current working directory
+      fs.writeFileSync(fileName, payload);
+
       const s3UploadResponse = await s3.upload(params).promise();
 
       // Store the S3 URL in the database (Replace this with your database logic)
       const imageUrl = s3UploadResponse.Location;
+
       const specificBus = await bus.findOne({ ThingName: thingName });
 
       if (specificBus) {
