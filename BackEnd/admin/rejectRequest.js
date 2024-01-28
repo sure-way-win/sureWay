@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const child = require("../models/childModel");
 
-router.delete("/rejectRequest", async (req, res) => {
+router.put("/rejectRequest", async (req, res) => {
   const { parent_username, name } = req.body;
   const { agency } = req.query; // Assuming the agency parameter is passed in the query string
 

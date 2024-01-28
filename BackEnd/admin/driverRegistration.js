@@ -14,6 +14,7 @@ router.post("/driverRegistration", async (req, res) => {
     addressD,
     nicD,
     licensenumberD,
+    assignedVehicle,
   } = req.body;
 
   const { agency } = req.query; // Assuming the agency parameter is passed in the query string
@@ -38,6 +39,7 @@ router.post("/driverRegistration", async (req, res) => {
       NIC: nicD,
       licenseNumber: licensenumberD,
       agency: agency,
+      assignedVehicle: assignedVehicle,
     });
 
     // Save the User document to the database

@@ -34,13 +34,13 @@ const adminLogin = require("./adminConfigurations/adminLogin");
 app.use("/Admin", adminLogin);
 
 const assigningBusForChildren = require("./admin/assigningBusForChildren");
-app.use("/Admin/", assigningBusForChildren);
+app.use("/Admin", assigningBusForChildren);
 
 const rejectRequest = require("./admin/rejectRequest");
-app.use("/Admin/", rejectRequest);
+app.use("/Admin", rejectRequest);
 
 const { triggeringSnap } = require("./admin/triggeringSnap");
-app.use("/IoT", triggeringSnap);
+app.use("/Admin", triggeringSnap);
 
 const adminSignup = require("./adminConfigurations/adminSignup");
 app.use("/Admin", adminSignup);
