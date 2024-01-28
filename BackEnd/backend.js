@@ -36,6 +36,9 @@ app.use("/Admin", adminLogin);
 const assigningBusForChildren = require("./admin/assigningBusForChildren");
 app.use("/Admin", assigningBusForChildren);
 
+const gettingMatchingAvailableBus = require("./admin/gettingMatchingAvailableBus");
+app.use("/Admin", gettingMatchingAvailableBus);
+
 const rejectRequest = require("./admin/rejectRequest");
 app.use("/Admin", rejectRequest);
 

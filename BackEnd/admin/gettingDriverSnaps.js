@@ -5,7 +5,6 @@ const driver = require("../models/driverModel");
 router.get("/gettingDriverSnaps", async (req, res) => {
   try {
     const { username } = req.body;
-    console.log(req.body);
     const driverSnaps = await driver.find({ username }).select("Snap");
 
     // Print the data to the console
