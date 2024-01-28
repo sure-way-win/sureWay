@@ -1,102 +1,121 @@
 const awsIot = require("aws-iot-device-sdk");
 const http = require("http");
-const WebSocket = require("ws");
+const socketIo = require("socket.io");
 
-// AWS IoT configuration
+// Configure AWS IoT
 const endpoint = "a2acc7p4itkz1x-ats.iot.eu-north-1.amazonaws.com";
 const rootCAPath = "./permissions/rootCA.pem.txt";
 const privateKeyPath = "./permissions/private.key.txt";
 const certificatePath = "./permissions/cert.crt.txt";
 
-// WebSocket server configuration
-const webSocketServer = new WebSocket.Server({ noServer: true });
+function createDevice() {
+  return awsIot.device({
+    host: endpoint,
+    port: 8883,
+    keyPath: privateKeyPath,
+    certPath: certificatePath,
+    caPath: rootCAPath,
+  });
+}
 
-// AWS IoT device
-let device = awsIot.device({
-  host: endpoint,
-  port: 8883,
-  keyPath: privateKeyPath,
-  certPath: certificatePath,
-  caPath: rootCAPath,
-});
+function initializeAWSIoTServer() {
+  let device = createDevice();
 
-webSocketServer.on("connection", (socket) => {
-  console.log("Client connected");
+  // Create an HTTP server
+  const server = http.createServer();
 
-  // Handle incoming messages from clients
-  socket.on("message", (message) => {
-    console.log(`Received message from client: ${message}`);
+  // Use cors middleware to handle CORS headers
+  const io = socketIo(server, {
+    cors: {
+      origin: "*", // Allow requests from any origin
+      methods: ["GET", "POST"],
+    },
   });
 
-  // Handle disconnection
-  socket.on("close", () => {
-    console.log("Client disconnected");
-  });
-});
-
-device.on("connect", () => {
-  console.log("AWS IoT Connected!");
-
-  // Subscribe to the IoT topic
-  const iotTopic = "esp8266/alert";
-  device.subscribe(iotTopic);
-
-  device.on("message", (topic, payload) => {
+  function onMessage(topic, payload) {
     try {
       const messagePayload = JSON.parse(payload.toString());
       console.log(`Received message on topic ${topic}:`, messagePayload);
 
       // Extract thingName from the payload
-      const { thingName, message } = messagePayload;
+      const { thingName, ...rest } = messagePayload;
+      console.log(thingName);
 
-      // Broadcast the message to connected WebSocket clients under the specific thingName
-      webSocketServer.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          // Check if the client is interested in the specific thingName
-          if (client.thingName === thingName) {
-            client.send(JSON.stringify({ thingName, message }));
-          }
-        }
-      });
+      // Emit the message to connected Socket.IO clients under the ThingName
+      io.emit(thingName, rest);
     } catch (error) {
       console.error(`Error parsing message on topic ${topic}:`, error.message);
     }
-  });
-});
-
-// Handle disconnect events
-device.on("close", () => {
-  console.log("Connection closed. Attempting to reconnect...");
-  setTimeout(() => {
-    device.end();
-    device = awsIot.device({
-      host: iotEndpoint,
-      port: 8883,
-      keyPath: privateKeyPath,
-      certPath: certificatePath,
-      caPath: rootCAPath,
-    });
-  }, 5000); // 5 seconds delay before attempting to reconnect
-});
-
-device.on("error", (error) => {
-  console.error("Error:", error.message);
-  if (error.message === "Not authorized") {
-    console.error("Check your AWS IoT credentials and permissions.");
   }
-});
 
-const server = http.createServer((req, res) => {
-  // Handle HTTP requests (if needed)
-});
+  device.on("connect", function () {
+    console.log("AWS IoT Connected!");
 
-server.on("upgrade", (request, socket, head) => {
-  webSocketServer.handleUpgrade(request, socket, head, (socket) => {
-    webSocketServer.emit("connection", socket, request);
+    // Subscribe to the specific topic
+    const topic = "esp8266/alert";
+    device.subscribe(topic, { qos: 1 }, function (err, granted) {
+      if (!err) {
+        console.log(`Subscribed to topic ${topic}`);
+      } else {
+        console.error("Subscription error:", err);
+      }
+    });
+
+    device.on("message", onMessage);
   });
-});
 
-const PORT = 3002;
-server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+  // Handle disconnect events
+  device.on("close", function () {
+    console.log("Connection closed. Attempting to reconnect...");
+    setTimeout(() => {
+      device.end();
+      device = createDevice(); // Create a new device instance for reconnection
+    }, 5000); // 5 seconds delay before attempting to reconnect
+  });
+
+  device.on("error", (error) => {
+    console.error("Error:", error.message);
+    if (error.message === "Not authorized") {
+      console.error("Check your AWS IoT credentials and permissions.");
+    }
+  });
+
+  process.on("SIGINT", () => {
+    console.log("Disconnecting...");
+    device.end();
+    process.exit();
+  });
+
+  process.on("uncaughtException", (error) => {
+    console.error("Uncaught Exception:", error);
+    process.exit(1);
+  });
+
+  process.on("unhandledRejection", (reason, promise) => {
+    console.error("Unhandled Rejection at:", promise, "reason:", reason);
+    process.exit(1);
+  });
+
+  // Socket.IO connection event
+  io.on("connection", (socket) => {
+    console.log("A user connected");
+
+    // Handle disconnect event when a client disconnects
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
+    });
+
+    // Handle custom event to join a room based on thingName
+    // socket.on("join", (thingName) => {
+    //   console.log(`User joined room: ${thingName}`);
+    //   socket.join(thingName);
+    // });
+  });
+
+  const PORT = 3002; // Choose a different port if needed
+  server.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+}
+
+initializeAWSIoTServer();
