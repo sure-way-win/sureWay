@@ -46,10 +46,16 @@ device.on("connect", () => {
       const messagePayload = JSON.parse(payload.toString());
       console.log(`Received message on topic ${topic}:`, messagePayload);
 
-      // Broadcast the message to connected WebSocket clients
+      // Extract thingName from the payload
+      const { thingName, message } = messagePayload;
+
+      // Broadcast the message to connected WebSocket clients under the specific thingName
       webSocketServer.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(messagePayload));
+          // Check if the client is interested in the specific thingName
+          if (client.thingName === thingName) {
+            client.send(JSON.stringify({ thingName, message }));
+          }
         }
       });
     } catch (error) {
