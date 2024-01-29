@@ -11,7 +11,18 @@ router.post("/vehicleRegistration", async (req, res) => {
       .status(400)
       .json({ success: false, message: "Agency parameter is required" });
   }
-
+  const existingVehicle = await bus.findOne({ vehicleID: vehicleNumber });
+  if (existingVehicle) {
+    console.log("Vehicle already registered");
+    return res.status(400).send("Vehicle already registered");
+  }
+  const existingThing = await bus.findOne({ ThingName });
+  if (existingThing) {
+    console.log("Under this serial number already vehicle registered");
+    return res
+      .status(400)
+      .send("Under this serial number already vehicle registered");
+  }
   try {
     const newVehicle = new bus({
       vehicleID: vehicleNumber,

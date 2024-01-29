@@ -8,10 +8,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json()); // Enable parsing of JSON in requests
 
-const setupServer = require("./serverSetup");
-// Call the setupServer function to set up your server
-setupServer();
-
 const connectToDatabase = require("./mongoDB/connection");
 connectToDatabase();
 

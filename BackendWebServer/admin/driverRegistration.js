@@ -25,6 +25,18 @@ router.post("/driverRegistration", async (req, res) => {
       .status(400)
       .json({ success: false, message: "Agency parameter is required" });
   }
+  const existingUserName = await driver.findOne({ username: userDname });
+  if (existingUserName) {
+    console.log("Username already exists");
+    return res.status(400).send("Username already exists");
+  }
+  const existingDriver = await driver.findOne({
+    $or: [{ NIC: nicD }, { licenseNumber: licensenumberD }],
+  });
+  if (existingDriver) {
+    console.log("NIC or license Number already exists");
+    return res.status(400).send("NIC or license Number already exists");
+  }
 
   try {
     const hashedDPassword = await bcrypt.hash(password, 10);

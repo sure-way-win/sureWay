@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, memo } from "react";
 import { Route } from "react-router-dom";
-import { gettVehicleSnap } from "../services/snapService";
+//import { gettVehicleSnap } from "../services/snapService";
 import { triggerSnap } from "../services/snapService";
 import io from "socket.io-client";
 import {
@@ -68,11 +68,22 @@ const SocketClient = (props) => {
               />
             ))}
             {/* <AnimatedMarker positions={messages} /> */}
-
-            <Directions endAddress={bus?.SchoolAddress} />
+            <div className="card" style={{ width: "300px", marginTop: "70px" }}>
+              <h1 style={{ fontSize: "20px" }}>Current Speed:</h1>
+              <p1>{messages[messages.length - 1]?.speed}</p1>
+            </div>
           </Map>
+          <div>
+            <Directions endAddress={bus?.SchoolAddress} />
+          </div>
         </APIProvider>
       </div>
+
+      {/* <div className="card" style={{ width: "200px" }}>
+        <h1>Directions</h1>
+        <p1>Distance: {Directions(bus?.SchoolAddress)?.[0]}</p1>
+        <p1>Duration: {Directions(bus?.SchoolAddress)?.[1]}</p1>
+      </div> */}
       <button
         type="button"
         class="btn btn-primary"
@@ -92,6 +103,15 @@ const SocketClient = (props) => {
           </a>
         )}
       />
+      <div
+        className="card"
+        style={{ width: "200px", marginLeft: "500px", marginTop: "0px" }}
+      >
+        <h1>Position</h1>
+        <p1>PositionX: {messages[messages.length - 1]?.angularX}</p1>
+        <p1>PositionY: {messages[messages.length - 1]?.angularY}</p1>
+        <p1>PositionZ: {messages[messages.length - 1]?.angularZ}</p1>
+      </div>
       <div>
         <h1>Received AWS IoT Messages:</h1>
         <ul>
@@ -169,12 +189,14 @@ function Directions({ endAddress }) {
   if (!leg) return null;
 
   return (
-    <div className="card" style={{ width: "200px" }}>
+    <div className="card" style={{ width: "200px", marginTop: "70px" }}>
       <h1>Directions</h1>
       <p1>Distance: {leg.distance.text}</p1>
       <p1>Duration: {leg.duration.text}</p1>
     </div>
   );
+
+  //return [leg.distance.text, leg.duration.text];
 }
 
 // const DynamicMarker = ({ position }) => {
@@ -278,50 +300,50 @@ const DynamicMarker = memo(({ position }) => {
   return null;
 });
 
-const AnimatedMarker = ({ positions }) => {
-  const map = useMap();
-  const markerRef = useRef(null);
+// const AnimatedMarker = ({ positions }) => {
+//   const map = useMap();
+//   const markerRef = useRef(null);
 
-  useEffect(() => {
-    if (!map || !positions || positions.length === 0) return;
+//   useEffect(() => {
+//     if (!map || !positions || positions.length === 0) return;
 
-    const lat = positions[positions.length - 1].latitude;
-    const lng = positions[positions.length - 1].longitude;
-    const lastPosition = { lat, lng };
-    if (!markerRef.current) {
-      markerRef.current = new window.L.Marker(lastPosition).addTo(map);
-    } else {
-      animateMarker(markerRef?.current, lastPosition);
-    }
+//     const lat = positions[positions.length - 1].latitude;
+//     const lng = positions[positions.length - 1].longitude;
+//     const lastPosition = { lat, lng };
+//     if (!markerRef.current) {
+//       markerRef.current = new window.L.Marker(lastPosition).addTo(map);
+//     } else {
+//       animateMarker(markerRef?.current, lastPosition);
+//     }
 
-    return () => {
-      markerRef.current.remove();
-    };
-  }, [map, positions]);
+//     return () => {
+//       markerRef.current.remove();
+//     };
+//   }, [map, positions]);
 
-  const animateMarker = (marker, newPosition) => {
-    const start = marker.getLatLng();
-    const end = new window.L.LatLng(newPosition.lat, newPosition.lng);
-    let t = 0;
-    const duration = 1000; // Animation duration in milliseconds
+//   const animateMarker = (marker, newPosition) => {
+//     const start = marker.getLatLng();
+//     const end = new window.L.LatLng(newPosition.lat, newPosition.lng);
+//     let t = 0;
+//     const duration = 1000; // Animation duration in milliseconds
 
-    const animate = () => {
-      if (t < duration) {
-        const lat = start.lat + ((end.lat - start.lat) * t) / duration;
-        const lng = start.lng + ((end.lng - start.lng) * t) / duration;
-        const newPos = new window.L.LatLng(lat, lng);
-        marker.setLatLng(newPos);
-        t += 16; // 60 frames per second
-        requestAnimationFrame(animate);
-      } else {
-        marker.setLatLng(end);
-      }
-    };
+//     const animate = () => {
+//       if (t < duration) {
+//         const lat = start.lat + ((end.lat - start.lat) * t) / duration;
+//         const lng = start.lng + ((end.lng - start.lng) * t) / duration;
+//         const newPos = new window.L.LatLng(lat, lng);
+//         marker.setLatLng(newPos);
+//         t += 16; // 60 frames per second
+//         requestAnimationFrame(animate);
+//       } else {
+//         marker.setLatLng(end);
+//       }
+//     };
 
-    animate();
-  };
+//     animate();
+//   };
 
-  return null;
-};
+//   return null;
+// };
 
 export default SocketClient;

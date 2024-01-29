@@ -3,7 +3,7 @@ import config from "../config.json";
 
 export async function getDriverSnaps(obj) {
   const apiEndpoint = `${config.apiUrl}/Admin/gettingDriverSnaps`;
-  return http.get(apiEndpoint, obj);
+  return http.get(apiEndpoint, { params: obj });
 }
 
 export async function triggerSnap(obj) {
