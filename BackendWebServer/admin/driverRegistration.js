@@ -58,7 +58,7 @@ router.post("/driverRegistration", async (req, res) => {
     // Save the User document to the database
     await newDriver.save();
 
-    const foundVehicle = await child.findOne({
+    const foundVehicle = await bus.findOne({
       vehicleID: assignedVehicle,
     });
 

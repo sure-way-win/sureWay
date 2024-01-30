@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-const port = 8000;
+const port = 3000;
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
@@ -80,6 +80,12 @@ app.use("/Admin", gettingThingName);
 
 const gettingPickupAddresses = require("./admin/gettingPickupAddresses");
 app.use("/Admin", gettingPickupAddresses);
+
+const deleteVerifiedChildren = require("./admin/deleteVerifiedChildren");
+app.use("/Admin", deleteVerifiedChildren);
+
+const deleteDriver = require("./admin/deleteDriver");
+app.use("/Admin", deleteDriver);
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is running on http://localhost:${port}`);
